@@ -37,10 +37,23 @@
       list-style: none;
     }
 
-    li span {
+    span {
       padding-left: 0.6rem;
       font-size: 1.6rem;
       line-height: 2.4rem;
+
+    }
+
+    input {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.6rem;
+      line-height: 2.4rem;
+      padding: 0.8rem;
+      border-radius: 5px;
+    }
+
+    input[type="submit"] {
+      cursor: pointer;
     }
 
   </style>
@@ -53,35 +66,47 @@
     <div id="output">
       <ul id="task-list"></ul>
     </div>
+    <form action="" id="form">
+      <span>Task: </span><input type="text" name="task" placeholder="New task">
+      <input type="submit" value="Add new task">
+    </form>
   </div>
 
   <script>
-    const data = '{"tasks":{"Mow the lawn":false,"Take out trash":false,"Do the laundry":true,"Make dinner":false}}';
-    let dataJSON = JSON.parse(data);
-    let tasks = dataJSON.tasks;
+    let dataJSON = '';
     const output = document.getElementById('output');
-    const taskList = document.getElementById('task-list');
-
-    for (let task in tasks) {
-      let status = tasks[task] ? 'checked' : '';
-      let listItem = `<li><input type="checkbox" value="${task}" ${status}><span>${task}</span></li>`;
-      taskList.innerHTML += listItem;
+    const taskList = document.querySelector('#task-list');
+    window.onload = function () {
+      if (sessionStorage['task'] != null) {
+        dataJSON = JSON.parse(sessionStorage['task']);
+      } else {
+        let data =
+          '[{"info":"Cut the Grass","status":false},{"info":"Clean Room","status":false},{"info":"Go to Gym","status":false},{"info":"Make Dinner","status":false}]';
+        dataJSON = JSON.parse(data);
+      }
+      buildCheckboxes(dataJSON)
     }
 
-    const addEvents = () => {
-      const checkboxes = document.querySelectorAll('#task-list input[type="checkbox"');
+    function buildCheckboxes(data) {
+      for (let key in data) {
+        const status = data[key].status ? ' checked ' : ' ';
+        const html = `<li> <input type="checkbox" value="${key}" ${status}><span>${data[key].info}</span></li>`;
+        taskList.innerHTML += html;
+      }
+      addEvents()
+    }
 
-      for (let index in checkboxes) {
-        checkboxes[index].onchange = updateJSON;
+    function addEvents() {
+      const checkBoxes = document.querySelectorAll('#taskList input[type="checkbox"]');
+      for (let index in checkBoxes) {
+        checkBoxes[index].onchange = updateJSON;
       }
     }
 
-    const updateJSON = () => {
-      let listItem = event.target.value;
-      tasks[listItem] = event.target.checked;
+    function updateJSON() {
+      let key = event.target.value;
+      dataJSON[key].status = event.target.checked
     }
-
-    addEvents();
 
   </script>
 </body>
