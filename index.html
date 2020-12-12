@@ -76,6 +76,15 @@
     let dataJSON = '';
     const output = document.getElementById('output');
     const taskList = document.querySelector('#task-list');
+    document.getElementById('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      let tempValue = document.querySelector('input[name="task"]').value;
+      addNewItem({
+        "info": tempValue,
+        "status": false
+      });
+    })
+
     window.onload = function () {
       if (sessionStorage['task'] != null) {
         dataJSON = JSON.parse(sessionStorage['task']);
@@ -85,6 +94,12 @@
         dataJSON = JSON.parse(data);
       }
       buildCheckboxes(dataJSON)
+    }
+
+    function addNewItem(data) {
+      const html = `<li> <input type="checkbox" value="${dataJSON.length}"><span>${data.info}</span></li>`;
+      taskList.innerHTML += html;
+      dataJSON.push(data);
     }
 
     function buildCheckboxes(data) {
