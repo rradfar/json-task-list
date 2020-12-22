@@ -90,31 +90,36 @@
         dataJSON = JSON.parse(sessionStorage['task']);
       } else {
         let data =
-          '[{"info":"Cut the Grass","status":false},{"info":"Clean Room","status":false},{"info":"Go to Gym","status":false},{"info":"Make Dinner","status":false}]';
+          '[{"info":"Cut the Grass","status":false},{"info":"Clean Room","status":false},{"info":"Go to Gym","status":true},{"info":"Make Dinner","status":false}]';
         dataJSON = JSON.parse(data);
       }
       buildCheckboxes(dataJSON)
     }
 
     function addNewItem(data) {
-      const html = `<li> <input type="checkbox" value="${dataJSON.length}"><span>${data.info}</span></li>`;
-      taskList.innerHTML += html;
+      addCheckbox(data, dataJSON.length);
       dataJSON.push(data);
+    }
+
+    function addCheckbox(data, key) {
+      const li = document.createElement('li');
+      const span = document.createElement('span');
+      const checkbox = document.createElement('input');
+      const textInside = document.createTextNode(data.info);
+      checkbox.type = 'checkbox';
+      checkbox.value = key;
+      checkbox.checked = data.status;
+      checkbox.setAttribute('onchange', 'updateJSON()');
+
+      li.appendChild(checkbox);
+      span.appendChild(textInside);
+      li.appendChild(span);
+      document.querySelector('#task-list').appendChild(li);
     }
 
     function buildCheckboxes(data) {
       for (let key in data) {
-        const status = data[key].status ? ' checked ' : ' ';
-        const html = `<li> <input type="checkbox" value="${key}" ${status}><span>${data[key].info}</span></li>`;
-        taskList.innerHTML += html;
-      }
-      addEvents()
-    }
-
-    function addEvents() {
-      const checkBoxes = document.querySelectorAll('#taskList input[type="checkbox"]');
-      for (let index in checkBoxes) {
-        checkBoxes[index].onchange = updateJSON;
+        addCheckbox(data[key], key);
       }
     }
 
